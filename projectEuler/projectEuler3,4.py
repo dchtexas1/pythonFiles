@@ -1,6 +1,6 @@
 ###############################################################################
 # Name: Dax Henson
-# Date: 2017/01/2
+# Date: 2017/01/2x
 # Description: Solves problems 3 and 4 of Project Euler
 ###############################################################################
 from math import sqrt
@@ -35,7 +35,10 @@ def problem3(num):
             if (num > 1):
                 factors.append(num)
             break
-    return max(factors)
+    if (isPrime(max(factors)) is True):
+        return max(factors)
+    else:
+        return "something, right? What did you do?? You broke it!"
 
 
 # solves problem 4
