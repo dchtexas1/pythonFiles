@@ -12,9 +12,8 @@ class Room(object):
     # the constructor
 
     def __init__(self, name):
-        # rooms have a name, exits (e.g., south), exit locations (e.g., to the south is room n),
-        # items (e.g., table), item descriptions (for each item), and grabbables (things that can
-        # be taken into inventory)
+        # rooms have a name, exits, exit locations, items, item descriptions
+        # and grabbables (things that can be taken into inventory)
         self.name = name
         self.exits = []
         self.exitLocations = []
@@ -24,53 +23,52 @@ class Room(object):
     # getters and setters for the instance variables
 
     @property
-    def name(self)
+    def name(self):
         return self._name
 
     @name.setter
-    def name(self)
+    def name(self, value):
         self._name = value
 
     @property
-    def exits(self)
+    def exits(self):
         return self._exits
 
     @exits.setter
-    def exits(self)
+    def exits(self, value):
         self._exits = value
 
     @property
-    def exitLocations(self)
+    def exitLocations(self):
         return self._exitLocations
 
     @exitLocations.setter
-    def exitLocations(self)
+    def exitLocations(self, value):
         self._exitLocations = value
 
     @property
-    def items(self)
+    def items(self):
         return self._items
 
     @items.setter
-    def items(self)
+    def items(self, value):
         self._items = value
 
     @property
-    def itemDescriptions(self)
+    def itemDescriptions(self):
         return self._itemDescriptions
 
     @itemDescriptions.setter
-    def itemDescriptions(self)
+    def itemDescriptions(self, value):
         self._itemDescriptions = value
 
     @property
-    def grabbables(self)
+    def grabbables(self):
         return self._grabbables
 
     @grabbables.setter
-    def grabbables(self)
+    def grabbables(self, value):
         self._grabbables = value
-
 
     # adds an exit to the room
     # the exit is a string (e.g., north)
@@ -137,8 +135,8 @@ def createRooms():
 
     r2.addExit("south", r4)
     r2.addExit("west", r1)
-    r2.addItem("rug", "It is made of oak. A golden key rests on it.")
-    r2.addItem("fireplace", "It is made of wicker and no one is sitting on it.")
+    r2.addItem("rug", "It is awfully plush.")
+    r2.addItem("fireplace", "It is warm, but dying.")
 
     r3.addExit("north", r1)
     r3.addExit("east", r4)
@@ -153,6 +151,8 @@ def createRooms():
     r4.addGrabbable("six-pack")
     r4.addItem("table", "It is made of oak. A golden key rests on it.")
     r4.addItem("chair", "It is made of wicker and no one is sitting on it.")
+
+    currentRoom = r1
 
 
 # displays an appropriate "message" when the player dies
@@ -185,6 +185,7 @@ def death():
     print " " * 3 + "\"" + "$" * 5 + "\"" + " " * 22 + "\"\"" + "$" * 4 + "\"\""
     print " " * 5 + "$" * 3 + "\"" + " " * 25 + "$" * 4 + "\""
 
+
 ###############################################################################
 # START THE GAME!!!
 createRooms()
@@ -192,7 +193,7 @@ inventory = []
 
 
 while True:
-    if (currentRoom == None):
+    if (currentRoom is None):
         death()
         break
     status = "{}\nYou are carrying: {}\n".format(currentRoom, inventory)
@@ -200,21 +201,40 @@ while True:
     print "==================================================================="
     print status
 
-    action = raw_input("What do you want to do?")
+    action = raw_input("What do you want to do? ")
     action = action.lower()
 
-    if (action == "quit" or action == "exit" or action == "bye"):
-        break
+    while (action == ""):
+        action = raw_input("")
+        action = action.lower()
+    else:
+        response = "I don't understand. Try valid noun.\n"\
+            "Valid verbs are:\n\n[go, head]\n[look, check]\n[take, get]"
 
-    response = "I don't understand. Try valid noun. Valid verbs are go, look, and take."
+    # if (action == "quit" or action == "exit" or action == "bye"):
+    #    break
+    if (action in "quit", "exit", "bye"):
+        break
 
     words = action.split()
     if (len(words) == 2):
         verb = words[0]
-        noun = words [1]
+        noun = words[1]
 
-        if (verb == "go"):
+        if (verb == "go" or verb == "head"):
             response = "Invalid exit"
+
+            if (noun == "n"):
+                noun = "north"
+
+            if (noun == "e"):
+                noun = "east"
+
+            if (noun == "s"):
+                noun = "south"
+
+            if (noun == "w"):
+                noun = "west"
 
             for i in range(len(currentRoom.exits)):
                 if (noun == currentRoom.exits[i]):
@@ -224,5 +244,20 @@ while True:
 
                     break
 
-        elif (verb == "look"):
+        elif (verb == "look" or verb == "check"):
             response = "I don't see that item."
+
+            for i in range(len(currentRoom.items)):
+                if (noun == currentRoom.items[i]):
+                    response = currentRoom.itemDescriptions[i]
+                    break
+        elif (verb == "take" or verb == "get"):
+            response = "I don't see that item."
+            for grabbable in currentRoom.grabbables:
+                if (noun == grabbable):
+                    inventory.append(grabbable)
+                    currentRoom.delGrabbable(grabbable)
+                    response = "Item grabbed."
+                    break
+
+    print "\n{}".format(response)
