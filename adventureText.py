@@ -141,7 +141,8 @@ def createRooms():
     r3.addExit("north", r1)
     r3.addExit("east", r4)
     r3.addGrabbable("book")
-    r3.addItem("bookshelves", "They are empty")
+    r3.addItem("bookshelf", "The bookshelf is neatly packed with books.\n"
+               "One of the books is not flush with the others.")
     r3.addItem("statue", "There is nothing special about it.")
     r3.addItem("desk", "The statue is resting on it. So is a book.")
 
@@ -211,8 +212,6 @@ while True:
         response = "I don't understand. Try valid noun.\n"\
             "Valid verbs are:\n\n[go, head]\n[look, check]\n[take, get]"
 
-    # if (action == "quit" or action == "exit" or action == "bye"):
-    #    break
     if (action in "quit", "exit", "bye"):
         break
 
@@ -221,7 +220,7 @@ while True:
         verb = words[0]
         noun = words[1]
 
-        if (verb == "go" or verb == "head"):
+        if (verb in "go", "head"):
             response = "Invalid exit"
 
             if (noun == "n"):
@@ -244,14 +243,14 @@ while True:
 
                     break
 
-        elif (verb == "look" or verb == "check"):
+        elif (verb in "look", "check"):
             response = "I don't see that item."
 
             for i in range(len(currentRoom.items)):
                 if (noun == currentRoom.items[i]):
                     response = currentRoom.itemDescriptions[i]
                     break
-        elif (verb == "take" or verb == "get"):
+        elif (verb in "take", "get"):
             response = "I don't see that item."
             for grabbable in currentRoom.grabbables:
                 if (noun == grabbable):
