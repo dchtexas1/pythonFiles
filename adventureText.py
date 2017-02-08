@@ -19,7 +19,12 @@ class Room(object):
         self.exitLocations = []
         self.items = []
         self.itemDescriptions = []
+        self.hiddenItems = []
+        self.hiddenItemDescriptions = []
         self.grabbables = []
+        self.interactables = []
+        self.interactableDescriptions = []
+        self.interactableState = []
     # getters and setters for the instance variables
 
     @property
@@ -63,12 +68,52 @@ class Room(object):
         self._itemDescriptions = value
 
     @property
+    def hiddenItems(self):
+        return self._hiddenItems
+
+    @hiddenItems.setter
+    def hiddenItems(self, value):
+        self._hiddenItems = value
+
+    @property
+    def hiddenItemDescriptions(self):
+        return self._hiddenItemDescriptions
+
+    @hiddenItemDescriptions.setter
+    def hiddenItemDescriptions(self, value):
+        self._hiddenItemDescriptions = value
+
+    @property
     def grabbables(self):
         return self._grabbables
 
     @grabbables.setter
     def grabbables(self, value):
         self._grabbables = value
+
+    @property
+    def interactables(self):
+        return self._interactables
+
+    @interactables.setter
+    def interactables(self, value):
+        self._interactables = value
+
+    @property
+    def interactableDescriptions(self, value):
+        return self._interactableDescriptions
+
+    @interactableDescriptions.setter
+    def interactableDescriptions(self, value):
+        self._interactableDescriptions = value
+
+    @property
+    def interactableState(self, value):
+        return self._interactableState
+
+    @interactableState.setter
+    def interactableState(self, value):
+        self._interactableState = value
 
     # adds an exit to the room
     # the exit is a string (e.g., north)
@@ -78,6 +123,10 @@ class Room(object):
         self._exits.append(exit)
         self._exitLocations.append(room)
 
+    def delExit(self, exit, room):
+        self._exits.remove(exit)
+        self._exitLocations.remove(room)
+
     # adds an item to the room
     # the item is a string (e.g., table)
     # the desc is a string that describes the item (e.g., it is made of wood)
@@ -85,6 +134,10 @@ class Room(object):
         # append the item and description to the appropriate lists
         self._items.append(item)
         self._itemDescriptions.append(desc)
+
+    def addHiddenItem(self, item, desc):
+        self._hiddenItems.append(item)
+        self._hiddenItemDescriptions.append(desc)
 
     # adds a grabbable item to the room
     # the item is a string (e.g., key)
@@ -98,15 +151,25 @@ class Room(object):
         # remove the item from the list
         self._grabbables.remove(item)
 
+    def addInteractable(self, item, desc, state):
+        self._interactables.append(item)
+        self._interactableDescriptions.append(desc)
+        self._interactableState.append(state)
+
     # returns a string description of the room
     def __str__(self):
         # first, the room name
-        s = "You are in {}.\n".format(self.name)
+        if (currentRoom == r0):
+            s = "You are {}.\n".format(self.name)
+        else:
+            s = "You are in {}.\n".format(self.name)
 
         # next, the items in the room
         s += "You see: "
         for item in self.items:
             s += item + " "
+        for interactable in self.interactables:
+            s += interactable + " "
         s += "\n"
 
         # next, the exits from the room
@@ -120,40 +183,87 @@ class Room(object):
 ###############################################################################
 # creates the rooms
 def createRooms():
-    global currentRoom
+    global currentRoom, r0
 
-    r1 = Room("Room 1")
-    r2 = Room("Room 2")
+    # Generates all of the empty rooms
+    r1 = Room("an office")
+    r2 = Room("a library")
     r3 = Room("Room 3")
     r4 = Room("Room 4")
+    r5 = Room("Room 5")
+    r6 = Room("a sitting room")
+    r7 = Room("a kitchen")
+    r8 = Room("Room 8")
+    r9 = Room("a basement")
+    r10 = Room("a basement")
+    r11 = Room("a basement")
+    r12 = Room("a basement")
+    r0 = Room("outside")
 
-    r1.addExit("east", r2)
-    r1.addExit("south", r3)
-    r1.addGrabbable("key")
-    r1.addItem("table", "It is made of oak. A golden key rests on it.")
-    r1.addItem("chair", "It is made of wicker and no one is sitting on it.")
+    # Generates the office
+    r1.addExit("north", r1)
+    r1.addExit("east", r3)
+    r1.addGrabbable("keycard")
+    r1.addItem("desk", "A modern desk, made of glass and carbon-fiber. "
+               "There is a keycard on the desk\nbeside an inlaid terminal.")
+    r1.addItem("chair", "It is smooth, black, and shiny.")
+    r1.addItem("terminal", "The terminal glows an amber color. "
+               "There is text on the screen.")
+    r1.addHiddenItem("text", "The terminal displays a draft of a message to "
+                     "the separatist chancellor about\ntransporting a bomb "
+                     "out of the basement.")
 
-    r2.addExit("south", r4)
-    r2.addExit("west", r1)
+    # Generates the library
+    r2.addExit("south", r1)
     r2.addItem("rug", "It is awfully plush.")
     r2.addItem("fireplace", "It is warm, but dying.")
 
-    r3.addExit("north", r1)
-    r3.addExit("east", r4)
+    # Generates room 3
+    r3.addExit("north", r4)
+    r3.addExit("west", r1)
+    r3.addExit("south", None)
     r3.addGrabbable("book")
     r3.addItem("bookshelf", "The bookshelf is neatly packed with books.\n"
                "One of the books is not flush with the others.")
     r3.addItem("statue", "There is nothing special about it.")
-    r3.addItem("desk", "The statue is resting on it. So is a book.")
+    r3.addItem("desk", "The statue is resting on it.")
 
-    r4.addExit("north", r2)
-    r4.addExit("west", r3)
-    r4.addExit("south", None)
-    r4.addGrabbable("six-pack")
+    r4.addExit("south", r3)
+    r4.addExit("down", r5)
     r4.addItem("table", "It is made of oak. A golden key rests on it.")
-    r4.addItem("chair", "It is made of wicker and no one is sitting on it.")
 
-    currentRoom = r1
+    r5.addExit("up", r4)
+    r5.addExit("west", r6)
+
+    r6.addExit("east", r5)
+    r6.addExit("south", r7)
+    r6.addExit("west", r0)
+
+    r7.addExit("north", r6)
+    r7.addExit("east", r8)
+
+    r8.addExit("west", r7)
+    r8.addExit("down", r9)
+
+    r9.addExit("up", r8)
+    r9.addExit("west", r10)
+
+    r10.addExit("east", r9)
+    r10.addExit("north", r11)
+
+    r11.addExit("south", r10)
+    r11.addExit("east", r12)
+
+    r12.addExit("west", r11)
+    r12.addInteractable("bomb", "The bomb must be deactivated to save the "
+                        "Alliance.", "on")
+
+    r0.addExit("east", r6)
+    r0.addItem("trees", "The tree is devoid of leaves. This would lead you "
+               "to assume that it is winter,\nexcept for the fact that it is "
+               "hot enough to fry an egg.")
+
+    currentRoom = r12
 
 
 # displays an appropriate "message" when the player dies
@@ -166,7 +276,7 @@ def death():
     print " " * 8 + "u" + "$" * 23 + "u"
     print " " * 7 + "u" + "$" * 25 + "u"
     print " " * 7 + "u" + "$" * 25 + "u"
-    print " " * 7 + "u" + "$" * 6 + "\"" + " " * 3 + "\"" + "$" * 3 + "\"" + " " * 3 + "\"" + "$" * 6 + "u"
+    print " " * 7 + "u" + "$" * 6 + "\"" + " " * 3 + "\"" + "$" * 3 + "\"" " " * 3 + "\"" + "$" * 6 + "u"
     print " " * 7 + "\"" + "$" * 4 + "\"" + " " * 6 + "u$u" + " " * 7 + "$" * 4 + "\""
     print " " * 8 + "$" * 3 + "u" + " " * 7 + "u$u" + " " * 7 + "u" + "$" * 3
     print " " * 8 + "$" * 3 + "u" + " " * 6 + "u" + "$" * 3 + "u" + " " * 6 + "u" + "$" * 3
@@ -191,15 +301,20 @@ def death():
 # START THE GAME!!!
 createRooms()
 inventory = []
-
+directions = ["north", "south", "east", "west", "up", "down"]
+shortcuts = ["n", "s", "e", "w", "u", "d"]
 
 while True:
     if (currentRoom is None):
         death()
         break
+
+    # if ("keycard" in inventory):
+
     status = "{}\nYou are carrying: {}\n".format(currentRoom, inventory)
 
-    print "==================================================================="
+    print "=================================================================="\
+          "============="
     print status
 
     action = raw_input("What do you want to do? ")
@@ -212,7 +327,7 @@ while True:
         response = "I don't understand. Try valid noun.\n"\
             "Valid verbs are:\n\n[go, head]\n[look, check]\n[take, get]"
 
-    if (action in "quit", "exit", "bye"):
+    if (action in ["quit", "exit", "bye"]):
         break
 
     words = action.split()
@@ -220,20 +335,11 @@ while True:
         verb = words[0]
         noun = words[1]
 
-        if (verb in "go", "head"):
+        if (verb in ["go", "head"]):
             response = "Invalid exit"
 
-            if (noun == "n"):
-                noun = "north"
-
-            if (noun == "e"):
-                noun = "east"
-
-            if (noun == "s"):
-                noun = "south"
-
-            if (noun == "w"):
-                noun = "west"
+            if (noun in shortcuts):
+                noun = directions[shortcuts.index(noun)]
 
             for i in range(len(currentRoom.exits)):
                 if (noun == currentRoom.exits[i]):
@@ -243,20 +349,37 @@ while True:
 
                     break
 
-        elif (verb in "look", "check"):
+        elif (verb in ["look", "check"]):
             response = "I don't see that item."
 
             for i in range(len(currentRoom.items)):
                 if (noun == currentRoom.items[i]):
                     response = currentRoom.itemDescriptions[i]
                     break
-        elif (verb in "take", "get"):
+
+            for i in range(len(currentRoom.interactables)):
+                if (noun == currentRoom.interactables[i]):
+                    response = currentRoom.interactableDescriptions[i]
+                    break
+
+            for i in range(len(currentRoom.hiddenItems)):
+                if (noun == currentRoom.hiddenItems[i]):
+                    response = currentRoom.hiddenItemDescriptions[i]
+                    break
+
+        elif (verb in ["take", "get"]):
             response = "I don't see that item."
             for grabbable in currentRoom.grabbables:
                 if (noun == grabbable):
                     inventory.append(grabbable)
                     currentRoom.delGrabbable(grabbable)
+
                     response = "Item grabbed."
                     break
+
+        # elif (verb in ["use", ]):
+        #    response = "You don't have that item."
+        #    for item in inventory:
+        #        if (noun == item):
 
     print "\n{}".format(response)
