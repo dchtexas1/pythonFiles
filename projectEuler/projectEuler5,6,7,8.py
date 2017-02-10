@@ -5,44 +5,69 @@
 ###############################################################################
 from math import sqrt
 from fractions import gcd
-# it may help to make use of some math functions (which you can import)
-# it may also help to define other "helper" functions (i.e., delegate tasks!)
+# PLEASE NOTE THAT ALL INLINE COMMENTS ARE REFERENCING THE LINE BELOW THEM
 
 
 # solves problem 5
+'''
+I noticed that the "smallest positive number that is evenly divisible" is the
+same as "least common multiple," which is equal to the product of two numbers
+divided by the greatest common divisor of the two. So I used fraction.gcd()
+
+lambda allows me to use small functions without defining them, and reduce()
+lets me repeatedly find the least common multiple of the given range.
+'''
+
+
 def problem5():
     return reduce(lambda x, y: x * y / gcd(x, y), xrange(1, 21))
 
 
 # solves problem 6
+'''
+It's simple math. I'm just looking for the sum of the natural numbers and the
+the sum of the squared natural numbers, up to a target number, in this case
+100. Then I square the sum of natural numbers and subtract the sum of the
+squares from it.
+'''
+
+
 def problem6():
     # sets target max number
     n = 100
-    # sum of natural numbers formula
-    sn = (n * (n + 1)) / 2
+    # sum of natural numbers formula, squared
+    sns = ((n * (n + 1)) / 2) * ((n * (n + 1)) / 2)
     # sum of squared natural numbers formula
-    sns = (n * (n + 1) * (2 * n + 1)) / 6
-    return sn * sn - sns
+    ssn = (n * (n + 1) * (2 * n + 1)) / 6
+    # finds the difference
+    return sns - ssn
 
 
 # solves problem 7
+'''
+It just runs through and checks all of the odd numbers (two is already counted)
+for primality with a helper function. The helper function skips the base cases
+of any number less than two and any even number, since the main function begins
+at three and increments i by two.
+'''
+
+
 def isPrime(n):
-    if n == 2:
-        return True
-    if n <= 1 or n % 2 == 0:
-        return False
-    else:
-        for i in xrange(3, int(sqrt(n)) + 1):
-            if n % i == 0:
-                return False
-                break
-        return True
+    for i in xrange(3, int(sqrt(n)) + 1):
+        # if n is evenly divisible by a natural number, it is not prime.
+        if n % i == 0:
+            return False
+            break
+    return True
 
 
-def problem7(targ):
+def problem7():
+    # number to check
     i = 1
+    # tracks how many primes have been found
     primes = 1
-    while (primes < targ):
+    while (primes < 10001):
+        # must be before primality check or i will go too far
         i += 2
         if (isPrime(i) is True):
             primes += 1
@@ -51,7 +76,9 @@ def problem7(targ):
 
 # solves problem 8
 '''
-
+The function travels through the string and multiplies each digit within each
+instance of 13 characters not containing zero and then returns the largest
+product.
 '''
 
 
@@ -76,11 +103,16 @@ def problem8():
 84580156166097919133875499200524063689912560717606\
 05886116467109405077541002256983155200055935729725\
 71636269561882670428252483600823257530420752963450"
+    # tracks the largest product of 13 characters
     finalProduct = 1
     for i in xrange(0, len(string) - 13):
+        # ignores all zeros in every slice of 13 characters
         if ("0" not in string[i:i + 13]):
+            # creates a variable to easier manipulate the current 13 characters
             window = string[i:i + 13]
+            # tracks the product of the current window
             product = 1
+            # runs through and multiplies each digit in the window
             for j in xrange(0, len(window)):
                 product *= int(window[j])
             if (product > finalProduct):
@@ -96,7 +128,7 @@ print "The smallest positive number that is evenly divisible by all of the "\
 sol6 = problem6()
 print "The difference between the sum of squares and square of sum of the "\
     "first 100 natural numbers is {}".format(sol6)
-sol7 = problem7(10001)
+sol7 = problem7()
 print "The 10,001st prime number is {}".format(sol7)
 sol8 = problem8()
 print "The greatest product of thirteen adjacent digits is {}".format(sol8)
