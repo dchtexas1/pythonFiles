@@ -1,9 +1,9 @@
 ###############################################################################
 # Name: Dax Henson
-# Date: 2017/02/0x
+# Date: 2017/02/1x
 # Description: Adventure Text Game
 ###############################################################################
-
+from time import sleep
 ###############################################################################
 # the blueprint for a room
 
@@ -12,19 +12,21 @@ class Room(object):
     # the constructor
 
     def __init__(self, name):
-        # rooms have a name, exits, exit locations, items, item descriptions
+        # rooms have a name, exits, exit locations, items, item Descs
         # and grabbables (things that can be taken into inventory)
         self.name = name
         self.exits = []
         self.exitLocations = []
         self.items = []
-        self.itemDescriptions = []
+        self.itemDescs = []
         self.hiddenItems = []
-        self.hiddenItemDescriptions = []
+        self.hiddenItemDescs = []
         self.grabbables = []
+        self.grabbableDescs = []
         self.interactables = []
-        self.interactableDescriptions = []
+        self.interactableDescs = []
         self.interactableState = []
+        self.interactableReqs = []
     # getters and setters for the instance variables
 
     @property
@@ -60,12 +62,12 @@ class Room(object):
         self._items = value
 
     @property
-    def itemDescriptions(self):
-        return self._itemDescriptions
+    def itemDescs(self):
+        return self._itemDescs
 
-    @itemDescriptions.setter
-    def itemDescriptions(self, value):
-        self._itemDescriptions = value
+    @itemDescs.setter
+    def itemDescs(self, value):
+        self._itemDescs = value
 
     @property
     def hiddenItems(self):
@@ -76,12 +78,12 @@ class Room(object):
         self._hiddenItems = value
 
     @property
-    def hiddenItemDescriptions(self):
-        return self._hiddenItemDescriptions
+    def hiddenItemDescs(self):
+        return self._hiddenItemDescs
 
-    @hiddenItemDescriptions.setter
-    def hiddenItemDescriptions(self, value):
-        self._hiddenItemDescriptions = value
+    @hiddenItemDescs.setter
+    def hiddenItemDescs(self, value):
+        self._hiddenItemDescs = value
 
     @property
     def grabbables(self):
@@ -92,6 +94,14 @@ class Room(object):
         self._grabbables = value
 
     @property
+    def grabbableDescs(self):
+        return self._grabbableDesc
+
+    @grabbableDescs.setter
+    def grabbableDescs(self, value):
+        self._grabbableDesc = value
+
+    @property
     def interactables(self):
         return self._interactables
 
@@ -100,20 +110,28 @@ class Room(object):
         self._interactables = value
 
     @property
-    def interactableDescriptions(self, value):
-        return self._interactableDescriptions
+    def interactableDescs(self):
+        return self._interactableDescs
 
-    @interactableDescriptions.setter
-    def interactableDescriptions(self, value):
-        self._interactableDescriptions = value
+    @interactableDescs.setter
+    def interactableDescs(self, value):
+        self._interactableDescs = value
 
     @property
-    def interactableState(self, value):
+    def interactableState(self):
         return self._interactableState
 
     @interactableState.setter
     def interactableState(self, value):
         self._interactableState = value
+
+    @property
+    def interactableReqs(self):
+        return self._interactableReqs
+
+    @interactableReqs.setter
+    def interactableReqs(self, value="on"):
+        self._interactableReqs = value
 
     # adds an exit to the room
     # the exit is a string (e.g., north)
@@ -133,33 +151,36 @@ class Room(object):
     def addItem(self, item, desc):
         # append the item and description to the appropriate lists
         self._items.append(item)
-        self._itemDescriptions.append(desc)
+        self._itemDescs.append(desc)
 
     def addHiddenItem(self, item, desc):
         self._hiddenItems.append(item)
-        self._hiddenItemDescriptions.append(desc)
+        self._hiddenItemDescs.append(desc)
 
     # adds a grabbable item to the room
     # the item is a string (e.g., key)
-    def addGrabbable(self, item):
+    def addGrabbable(self, item, desc):
         # append the item to the list
         self._grabbables.append(item)
+        self._grabbableDesc.append(desc)
 
     # removes a grabbable item from the room
     # the item is a string (e.g., key)
-    def delGrabbable(self, item):
+    def delGrabbable(self, item, desc):
         # remove the item from the list
         self._grabbables.remove(item)
+        self._grabbableDesc.remove(desc)
 
-    def addInteractable(self, item, desc, state):
+    def addInteractable(self, item, desc, state, reqs):
         self._interactables.append(item)
-        self._interactableDescriptions.append(desc)
+        self._interactableDescs.append(desc)
         self._interactableState.append(state)
+        self._interactableReqs.append(reqs)
 
     # returns a string description of the room
     def __str__(self):
         # first, the room name
-        if (currentRoom == r0):
+        if (currentRoom in [r0, r4, r5, r8, r9]):
             s = "You are {}.\n".format(self.name)
         else:
             s = "You are in {}.\n".format(self.name)
@@ -183,18 +204,18 @@ class Room(object):
 ###############################################################################
 # creates the rooms
 def createRooms():
-    global currentRoom, r0
+    global currentRoom, r0, r4, r5, r8, r9, r12
 
     # Generates all of the empty rooms
     r1 = Room("an office")
     r2 = Room("a library")
-    r3 = Room("Room 3")
-    r4 = Room("Room 4")
-    r5 = Room("Room 5")
+    r3 = Room("a sunroom")
+    r4 = Room("at the top of a stairwell")
+    r5 = Room("at the bottom of a stairwell")
     r6 = Room("a sitting room")
     r7 = Room("a kitchen")
-    r8 = Room("Room 8")
-    r9 = Room("a basement")
+    r8 = Room("at the top of a dark stairwell")
+    r9 = Room("at the bottom of a stairwell, in a basement")
     r10 = Room("a basement")
     r11 = Room("a basement")
     r12 = Room("a basement")
@@ -203,7 +224,7 @@ def createRooms():
     # Generates the office
     r1.addExit("north", r1)
     r1.addExit("east", r3)
-    r1.addGrabbable("keycard")
+    r1.addGrabbable("keycard", "It is used to prove one's credentials.")
     r1.addItem("desk", "A modern desk, made of glass and carbon-fiber. "
                "There is a keycard on the desk\nbeside an inlaid terminal.")
     r1.addItem("chair", "It is smooth, black, and shiny.")
@@ -217,23 +238,27 @@ def createRooms():
     r2.addExit("south", r1)
     r2.addItem("rug", "It is awfully plush.")
     r2.addItem("fireplace", "It is warm, but dying.")
+    r2.addItem("bookshelves", "The bookshelves are neatly packed with books.\n"
+               "One of the books is not flush with the others.")
+    r2.addGrabbable("journal", "\"Some poignant world-building.\"")
 
     # Generates room 3
     r3.addExit("north", r4)
     r3.addExit("west", r1)
     r3.addExit("south", None)
-    r3.addGrabbable("book")
-    r3.addItem("bookshelf", "The bookshelf is neatly packed with books.\n"
-               "One of the books is not flush with the others.")
-    r3.addItem("statue", "There is nothing special about it.")
-    r3.addItem("desk", "The statue is resting on it.")
+    r3.addItem("statue", "It has an oddly fascist feel to it... Perhaps it is "
+               "because of the sieg heil pose.")
+    r3.addItem("couch", "Rather plain, given the ornate statue nearby.")
 
     r4.addExit("south", r3)
     r4.addExit("down", r5)
-    r4.addItem("table", "It is made of oak. A golden key rests on it.")
+    r4.addItem("stairwell", "There is some light downstairs, and an..."
+               "interesting smell wafts through.")
 
     r5.addExit("up", r4)
     r5.addExit("west", r6)
+    r5.addItem("stairwell", "It's rather dark upstairs, now that your eyes"
+               "have adjusted.")
 
     r6.addExit("east", r5)
     r6.addExit("south", r7)
@@ -255,15 +280,16 @@ def createRooms():
     r11.addExit("east", r12)
 
     r12.addExit("west", r11)
-    r12.addInteractable("bomb", "The bomb must be deactivated to save the "
-                        "Alliance.", "on")
+    r12.addInteractable("bomb", "It must be deactivated to save the Alliance. "
+                        "There is a card slot on the side.", "on", "keycard")
 
     r0.addExit("east", r6)
     r0.addItem("trees", "The tree is devoid of leaves. This would lead you "
                "to assume that it is winter,\nexcept for the fact that it is "
                "hot enough to fry an egg.")
+    r0.addItem("grass", "The grass is brown and dead.")
 
-    currentRoom = r12
+    currentRoom = r1
 
 
 # displays an appropriate "message" when the player dies
@@ -297,10 +323,19 @@ def death():
     print " " * 5 + "$" * 3 + "\"" + " " * 25 + "$" * 4 + "\""
 
 
+def trap():
+    sleep(5)
+    response = "The bomb starts ticking! Whoops!"
+    print "\n{}".format(response)
+    sleep(5)
+    death()
+
+
 ###############################################################################
 # START THE GAME!!!
 createRooms()
 inventory = []
+inventoryDesc = []
 directions = ["north", "south", "east", "west", "up", "down"]
 shortcuts = ["n", "s", "e", "w", "u", "d"]
 
@@ -308,6 +343,11 @@ while True:
     if (currentRoom is None):
         death()
         break
+
+    if (currentRoom == r12):
+        if (currentRoom.interactableState[[i for i, j in enumerate(currentRoom.interactables) if j == 'bomb'][0]] == "off"):
+            trap()
+            break
 
     # if ("keycard" in inventory):
 
@@ -354,32 +394,53 @@ while True:
 
             for i in range(len(currentRoom.items)):
                 if (noun == currentRoom.items[i]):
-                    response = currentRoom.itemDescriptions[i]
+                    response = currentRoom.itemDescs[i]
                     break
 
             for i in range(len(currentRoom.interactables)):
                 if (noun == currentRoom.interactables[i]):
-                    response = currentRoom.interactableDescriptions[i]
+                    response = currentRoom.interactableDescs[i]
                     break
 
             for i in range(len(currentRoom.hiddenItems)):
                 if (noun == currentRoom.hiddenItems[i]):
-                    response = currentRoom.hiddenItemDescriptions[i]
+                    response = currentRoom.hiddenItemDescs[i]
+                    break
+
+            for i in range(len(currentRoom.grabbables)):
+                if (noun == currentRoom.grabbables[i]):
+                    response = currentRoom.grabbableDescs[i]
+                    break
+
+            for i in range(len(inventory)):
+                if (noun == inventory[i]):
+                    response = inventoryDesc[i]
                     break
 
         elif (verb in ["take", "get"]):
             response = "I don't see that item."
-            for grabbable in currentRoom.grabbables:
-                if (noun == grabbable):
-                    inventory.append(grabbable)
-                    currentRoom.delGrabbable(grabbable)
+            for i in range(len(currentRoom.grabbables)):
+                if (noun == currentRoom.grabbables[i]):
+                    inventory.append(currentRoom.grabbables[i])
+                    inventoryDesc.append(currentRoom.grabbableDescs[i])
+                    currentRoom.delGrabbable(currentRoom.grabbables[
+                                             i], currentRoom.grabbableDescs[i])
 
                     response = "Item grabbed."
                     break
 
-        # elif (verb in ["use", ]):
-        #    response = "You don't have that item."
-        #    for item in inventory:
-        #        if (noun == item):
+        elif (verb in ["use"]):
+            response = "You don't have that item."
+            for item in inventory:
+                if (noun == item):
+                    response = "{} could not be used".format(item)
+                    for i in range(len(currentRoom.interactableReqs)):
+                        if (noun == currentRoom.interactableReqs[i]):
+                            if (currentRoom.interactableState[i] == "on"):
+                                currentRoom.interactableState[i] = "off"
+                            elif (currentRoom.interactableState[i] == "off"):
+                                currentRoom.interactableState[i] = "on"
 
+                            response = "{} used.".format(item)
+                            break
     print "\n{}".format(response)
