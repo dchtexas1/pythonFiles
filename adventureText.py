@@ -1,8 +1,29 @@
 ###############################################################################
 # Name: Dax Henson
 # Date: 2017/02/12
-# Description: Adventure Text Game
+# Description: Adventure Text Game by Jean Gourd; modified by Dax Henson
 ###############################################################################
+'''
+adventureText.py Enhancements
+
+1)  extra parsable words, probably not extra grammar, though
+2)  extra command, use (maybe others? not sure)
+3)  extra list of items that do not show up when surveying the room,
+    but can still be looked
+4)  extra rooms, in a "third" dimension
+5)  custom room names
+6)  objects that can be interacted with (requires #2)
+7)  small optimizations to code
+    (e.g. verb in ["look", "get"] vs verb == "look" and verb == "get")
+8)  directional shortcuts (i.e. "north" and "n" vs "north")
+    (no shortcuts past that, though; I don't know how to compare match quality)
+9)  extra, modified death() function
+10) slight grammar modification to Room().__str__
+11) ability to send empty commands without reprinting the room
+12) descriptions for grabbables, which also are removed from the room and
+    brought with you if the grabbable is picked up.
+'''
+
 # imports sleep for use in trap()
 from time import sleep
 ###############################################################################
