@@ -8,17 +8,20 @@ from math import sqrt
 
 # the 2D point class
 class Point(object):
+    # constructor; sets default x and y values and instantiates them
 
     def __init__(self, x=0.0, y=0.0):
         self.x = x
         self.y = y
 
+    # accessors and mutators for the x and y values
     @property
     def x(self):
         return self._x
 
     @x.setter
     def x(self, arg):
+        # converts the given value to a floating point value
         self._x = float(arg)
 
     @property
@@ -27,15 +30,19 @@ class Point(object):
 
     @y.setter
     def y(self, arg):
+        # converts the given value to a floating point value
         self._y = float(arg)
 
     def dist(self, arg):
+        # uses the pythagorean theorem to find the distance between two points
         return sqrt((self.x - arg.x)**2 + (self.y - arg.y)**2)
 
     def midpt(self, arg):
+        # uses the midpoint theorem to find the midpoint between two points
         return "({},{})".format((self.x + arg.x) / 2, (self.y + arg.y) / 2)
 
     def __str__(self):
+        # prints the point in the proper format
         return("({},{})").format(self.x, self.y)
 
 
