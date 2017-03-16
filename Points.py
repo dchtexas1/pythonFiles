@@ -1,8 +1,9 @@
 ###############################################################################
 # Name: Dax Henson
-# Date: 2017/03/1x
+# Date: 2017/03/15
 # Description: Implements 2D point class in Python.
 ###############################################################################
+from math import sqrt
 
 
 # the 2D point class
@@ -29,10 +30,10 @@ class Point(object):
         self._y = float(arg)
 
     def dist(self, arg):
-        pass
+        return sqrt((self.x - arg.x)**2 + (self.y - arg.y)**2)
 
     def midpt(self, arg):
-        pass
+        return "({},{})".format((self.x + arg.x) / 2, (self.y + arg.y) / 2)
 
     def __str__(self):
         return("({},{})").format(self.x, self.y)
