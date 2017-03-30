@@ -79,7 +79,7 @@ HEIGHT = 400
 # the default point radius is 0 pixels (i.e., no center to the oval)
 POINT_RADIUS = 0
 # colors to choose from when plotting points
-COLORS = [ "black", "red", "green", "blue", "cyan", "yellow", "magenta" ]
+COLORS = ["black", "red", "green", "blue", "cyan", "yellow", "magenta"]
 # the number of points to plot
 NUM_POINTS = 2500
 
