@@ -34,12 +34,9 @@ class Point(object):
         # converts the given value to a floating point value
         self._y = float(arg)
 
-    # uses the midpoint theorem to find each value midpoint between two points
-    def midptX(self, arg):
-        return ((self.x + arg.x) / 2)
-
-    def midptY(self, arg):
-        return ((self.y + arg.y) / 2)
+    # uses the midpoint theorem to find each midpoint value between two points
+    def midpt(self, arg):
+        return Point(((self.x + arg.x) / 2), ((self.y + arg.y) / 2))
 
 
 # the chaos game class
@@ -57,14 +54,14 @@ class ChaosGame(Canvas):
         p1 = vtcs[randint(0, 2)]
         p2 = vtcs[randint(0, 2)]
         # finds the midpoint of the two points
-        m = Point(p1.midptX(p2), p1.midptY(p2))
+        m = p1.midpt(p2)
         self.plot(m.x, m.y, POINT_COLOR)
         # plots the passed number of points
         for i in xrange(n):
             # selects a singular random vertex
             v = vtcs[randint(0, 2)]
             # finds and plots the midpoint between v and the previous midpoint
-            m1 = Point(m.midptX(v), m.midptY(v))
+            m1 = m.midpt(v)
             self.plot(m1.x, m1.y, POINT_COLOR)
             # moves on to finding the next midpoint
             m = m1
@@ -83,15 +80,6 @@ class ChaosGame(Canvas):
         # creates an array to keep track of the list
         global vtcs
         vtcs = [v1, v2, v3]
-
-    # function for rendering a point at a passed location in a color
-    # def plotV(self, x, y, color):
-    #     self.create_oval(x, y, x + VERTEX_RADIUS * 2,
-    #                      y + VERTEX_RADIUS * 2, outline=color, fill=color)
-    #
-    # def plotP(self, x, y, color):
-    #     self.create_oval(x, y, x + POINT_RADIUS * 2,
-    #                      y + POINT_RADIUS * 2, outline=color, fill=color)
 
     def plot(self, x, y, color, pointType="point"):
         if (pointType == "vertex"):
