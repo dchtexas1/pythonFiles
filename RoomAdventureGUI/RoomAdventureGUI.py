@@ -1,34 +1,15 @@
 ###############################################################################
 # Name: Dax Henson
-# Date: 2017/04/06
-# Description: An exporable house with different rooms filled with things.
+# Date: 2017/04/0x
+# Description:
 ###############################################################################
 from Tkinter import *
-from re import match
-
-'''
-RoomAdventureGUI.py Enhancements
-
-1) extra parsable words, probably not extra grammar, though
-2) extra command, [use]
-3) extra list of items that do not show up when surveying the room,
-   but can still be looked
-4) extra rooms, in a "third," "vertical" dimension
-5) custom room names
-6) objects that can be interacted with (requires #2)
-7) small optimizations to code (e.g. verb in ["look", "get"]
-   vs verb == "look" or verb == "get")
-8) noun shortcuts (i.e. you don't have to type the whole noun)
-9) extra, modified death option
-10) slight grammar and aesthetic modification to Room().__str__
-11) descriptions for grabbables, which also are removed from the room and
-    brought with you if the grabbable is picked up.
-'''
-
 
 # the room class
 # note that this class is fully implemented with dictionaries as
 # illustrated in the lesson "More on Data Structures"
+
+
 class Room(object):
     # the constructor
 
@@ -41,9 +22,7 @@ class Room(object):
         self.image = image
         self.exits = {}
         self.items = {}
-        self.hiddenItems = {}
-        self.grabbables = {}
-        self.interac = {}
+        self.grabbables = []
 
     # getters and setters for the instance variables
     @property
@@ -79,14 +58,6 @@ class Room(object):
         self._items = value
 
     @property
-    def hiddenItems(self):
-        return self._hiddenItems
-
-    @hiddenItems.setter
-    def hiddenItems(self, value):
-        self._hiddenItems = value
-
-    @property
     def grabbables(self):
         return self._grabbables
 
@@ -94,66 +65,47 @@ class Room(object):
     def grabbables(self, value):
         self._grabbables = value
 
-    @property
-    def interac(self):
-        return self._interac
-
-    @interac.setter
-    def interac(self, value):
-        self._interac = value
-
     # adds an exit to the room
     # the exit is a string (e.g., north)
     # the room is an instance of a room
     def addExit(self, exit, room):
         # append the exit and room to the appropriate dictionary
-        self.exits[exit] = room
+        self._exits[exit] = room
 
     # adds an item to the room
     # the item is a string (e.g., table)
     # the desc is a string that describes the item (e.g., it is made of wood)
     def addItem(self, item, desc):
         # append the item and description to the appropriate dictionary
-        self.items[item] = desc
-
-    def addHiddenItem(self, item, desc):
-        self.hiddenItems[item] = desc
+        self._items[item] = desc
 
     # adds a grabbable item to the room
     # the item is a string (e.g., key)
-    def addGrabbable(self, item, desc):
+    def addGrabbable(self, item):
         # append the item to the list
-        self.grabbables[item] = desc
+        self._grabbables.append(item)
 
     # removes a grabbable item from the room
     # the item is a string (e.g., key)
     def delGrabbable(self, item):
-        # remove the item from the dictionary
-        del self.grabbables[item]
-
-    def addInterac(self, item, desc, req, state):
-        self.interac[item] = [desc, req, state]
+        # remove the item from the list
+        self._grabbables.remove(item)
 
     # returns a string description of the room
     def __str__(self):
         # first, the room name
-        if (Game.currentRoom in [r0, r4, r5, r8, r9]):
-            s = "You are {}.\n".format(self.name)
-        else:
-            s = "You are in {}.\n".format(self.name)
+        s = "You are in {}.\n".format(self.name)
 
         # next, the items in the room
         s += "You see: "
         for item in self.items.keys():
-            s += "[" + item + "] "
-        for interactable in self.interac.keys():
-            s += "[" + interactable + "] "
+            s += item + " "
         s += "\n"
 
         # next, the exits from the room
         s += "Exits: "
         for exit in self.exits.keys():
-            s += "[" + exit + "] "
+            s += exit + " "
 
         return s
 
@@ -162,8 +114,8 @@ class Room(object):
 
 
 class Game(Frame):
-
     # the constructor
+
     def __init__(self, parent):
         # call the constructor in the superclass
         Frame.__init__(self, parent)
@@ -171,44 +123,44 @@ class Game(Frame):
     # creates the rooms
     def createRooms(self):
         # some functions elsewhere need to check for these rooms
-        global r0, r4, r5, r8, r9, r12
+        global currentRoom, r0, r4, r5, r8, r9, r12
 
         # Generates all of the empty rooms
         # all the rooms have names instead of "Room n"
-        r1 = Room("an office", "f2r1.gif")
-        r2 = Room("a library", "f2r2.gif")
-        r3 = Room("a sunroom", "f2r3.gif")
-        r4 = Room("at the top of a stairwell", "f2r4.gif")
-        r5 = Room("at the bottom of a stairwell", "f1r5.gif")
-        r6 = Room("a sitting room", "f1r6.gif")
-        r7 = Room("a kitchen", "f1r7.gif")
-        r8 = Room("at the top of a dark stairwell", "f1r8.gif")
-        r9 = Room("at the bottom of a stairwell, in a basement", "bmr9.gif")
-        r10 = Room("a basement", "bmr10.gif")
-        r11 = Room("a basement", "bmr11.gif")
-        r12 = Room("a basement", "bmr12.gif")
-        r0 = Room("outside", "ots0.gif")
+        r1 = Room("an office")
+        r2 = Room("a library")
+        r3 = Room("a sunroom")
+        r4 = Room("at the top of a stairwell")
+        r5 = Room("at the bottom of a stairwell")
+        r6 = Room("a sitting room")
+        r7 = Room("a kitchen")
+        r8 = Room("at the top of a dark stairwell")
+        r9 = Room("at the bottom of a stairwell, in a basement")
+        r10 = Room("a basement")
+        r11 = Room("a basement")
+        r12 = Room("a basement")
+        r0 = Room("outside")
 
         # generates the office
         r1.addExit("north", r2)
         r1.addExit("east", r3)
         # This keycard is used to change the state of the bomb
         r1.addGrabbable("keycard", "It is used to prove one's credentials.")
-        r1.addItem("desk", "A modern desk, made of glass and carbon-fiber.\n"
-                   "There's a keycard on the desk beside an inlaid\nterminal.")
+        r1.addItem("desk", "A modern desk, made of glass and carbon-fiber. "
+                   "There's a keycard on the desk\nbeside an inlaid terminal.")
         r1.addItem("chair", "It is smooth, black, and shiny.")
         r1.addItem("terminal", "The terminal glows an amber color. "
                    "There is text on the screen.")
         # this text can be looked, but it doesn't show up in Room.__str__
-        r1.addHiddenItem("text", "The terminal displays a draft of a message "
-                         "to the separatist chancellor about transporting a "
-                         "bomb\nout of the basement.")
+        r1.addHiddenItem("text", "The terminal displays a draft of a message
+                         "to the separatist chancellor about\ntransporting a"
+                         "bomb out of the basement.")
 
         # generates the library
         r2.addExit("south", r1)
         r2.addItem("rug", "It is awfully plush.")
-        r2.addItem("bookshelves", "The bookshelves are meticulously packed "
-                   "with\nbooks. One of the books is not flush with\nthe "
+        r2.addItem("bookshelves", "The bookshelves are meticulously packed
+                   "with books.\n One of the books is not flush with the"
                    "others. It appears to be a journal.")
         # alas, I am a programmer, not an author
         r2.addGrabbable("journal", "\"Some poignant world-building.\"")
@@ -218,21 +170,21 @@ class Game(Frame):
         r3.addExit("west", r1)
         r3.addExit("south", None)
         r3.addItem("statue", "It has an oddly fascist... Maybe it's "
-                   "the sieg\nheil salute.")
+                   "the sieg heil salute.")
         r3.addItem("couch", "Rather plain, given the ornate statue nearby.")
 
         # generates a stairwell room
         r4.addExit("south", r3)
         # here we have "vertical" movement
         r4.addExit("down", r5)
-        r4.addItem("stairwell", "There is some light downstairs, and an...\n"
+        r4.addItem("stairwell", "There is some light downstairs, and an..."
                    "interesting smell wafts through.")
 
         # generates a stairwell room
         r5.addExit("up", r4)
         r5.addExit("west", r6)
         r5.addItem("stairwell", "Now that your eyes have adjusted, it's "
-                   "rather\ndark upstairs.")
+                   "rather dark upstairs.")
 
         # generates a sitting room, with access to the outside
         r6.addExit("east", r5)
@@ -267,9 +219,9 @@ class Game(Frame):
         # generates a basement room with an interactive bomb requiring a
         # keycard
         r12.addExit("west", r11)
-        r12.addInterac("bomb", "It must be deactivated to save the "
-                       "Alliance.\nThere is a card slot on the side.",
-                       "keycard", "on")
+        r12.addInteractable("bomb", "It must be deactivated to save the "
+                            "Alliance. There is a card slot on the side.",
+                            "on", "keycard")
 
         # generates an room "outside." Of course, it's only outside bc I say so
         r0.addExit("east", r6)
@@ -281,7 +233,7 @@ class Game(Frame):
         # sets which room the user starts in
         Game.currentRoom = r1
         # initialize the player's inventory
-        Game.inventory = {}
+        Game.inventory = []
 
     # sets up the GUI
     def setupGUI(self):
@@ -335,21 +287,15 @@ class Game(Frame):
         # enable the text widget, clear it, set it, and disabled it
         Game.text.config(state=NORMAL)
         Game.text.delete("1.0", END)
-        elif (Game.currentRoom is None):
+        if (Game.currentRoom is None):
             # if dead, let the player know
-            if (r12.interac["bomb"][2] == "off"):
-                Game.text.insert(END, "An explosion killed you.\n"
-                                 "You have died.\n\n"
-                                 "The only thing you can do now is quit.\n")
-            Game.text.insert(END, "You have jumped out of a window to your "
-                                  "death.\nYou have died.\n\nThe only thing "
-                                  "you can do now is quit.")
+            Game.text.insert(END, "You are dead. The only thing you can do "
+                                  "now is quit.\n")
         else:
             # otherwise, display the appropriate status
-            Game.text.insert(END, str(Game.currentRoom)
-                             + "\nYou are carrying: "
-                             + str(sorted(Game.inventory.keys()))
-                             + "\n\n" + status)
+            Game.text.insert(END, str(Game.currentRoom) +
+                             "\nYou are carrying: " + str(Game.inventory) +
+                             "\n\n" + status)
         Game.text.config(state=DISABLED)
 
     # plays the game
@@ -365,129 +311,69 @@ class Game(Frame):
 
     # processes the player's input
     def process(self, event):
-        kills = ["quit", "exit", "bye"]
         # grab the player's input from the input at the bottom of
         # the GUI
         action = Game.player_input.get()
         # set the user's input to lowercase to make it easier to
         # compare the verb and noun to known values
         action = action.lower()
-        # split the user input into words (words are separated by
-        # spaces) and store the words in a list
-        words = action.split()
         # set a default response
         response = "I don't understand. Try verb noun. "\
                    "Valid verbs are go, look, and take"
         # exit the game if the player wants to leave (supports quit,
         # exit, and bye)
-        if (len(words) == 1):
-            response = "What?"
-            for i in kills:
-                if (match(action, i)):
-                    exit(0)
+        if (action in ["quit", "exit", "bye"]):
+            exit(0)
         # if the player is dead if goes/went south from room 4
         if (Game.currentRoom is None):
             # clear the player's input
             Game.player_input.delete(0, END)
             return
-
+        # split the user input into words (words are separated by
+        # spaces) and store the words in a list
+        words = action.split()
         # the game only understands two word inputs
         if (len(words) == 2):
             # isolate the verb and noun
             verb = words[0]
             noun = words[1]
             # the verb is: go
-            if (verb in ["go", "head"]):
+            if (verb == "go"):
                 # set a default response
-                response = "There's a wall there."
+                response = "Invalid exit."
                 # check for valid exits in the current room
-                for i in Game.currentRoom.exits:
-                    if (match(noun, i)):
-                        # if one is found, change the current room to
-                        # the one that is associated with the
-                        # specified exit
-                        Game.currentRoom = Game.currentRoom.exits[i]
-                        # set the response (success)
-                        response = "Room changed."
-                        break
-                    if (match(noun, "down")):
-                        response = "There's a floor there."
-                        if (Game.currentRoom == r0):
-                            response = "Digging a cave is too labor-intensive."
-                        break
-                    if (match(noun, "up")):
-                        response = "There's a ceiling there."
-                        if (Game.currentRoom == r0):
-                            response = "You can't fly."
-                        break
+                if (noun in Game.currentRoom.exits):
+                    # if one is found, change the current room to
+                    # the one that is associated with the
+                    # specified exit
+                    Game.currentRoom = Game.currentRoom.exits[noun]
+                # set the response (success)
+                response = "Room changed."
             # the verb is: look
-            elif (verb in ["look", "check"]):
+            elif (verb == "look"):
                 # set a default response
                 response = "I don't see that item."
                 # check for valid items in the current room
-                for i in Game.currentRoom.items:
-                    if (match(noun, i)):
-                        # if one is found, set the response to the
-                        # item's description
-                        response = Game.currentRoom.items[i]
-                        break
-
-                for i in Game.currentRoom.interac:
-                    if (match(noun, i)):
-                        response = Game.currentRoom.interac[i][0]
-                        break
-
-                for i in Game.currentRoom.hiddenItems:
-                    if (match(noun, i)):
-                        response = Game.currentRoom.hiddenItems[i]
-                        break
-
-                for i in Game.currentRoom.grabbables:
-                    if (match(noun, i)):
-                        response = Game.currentRoom.grabbables[i]
-                        break
-
-                for i in Game.inventory:
-                    if (match(noun, i)):
-                        response = Game.inventory[i]
-                        break
-
+                if (noun in Game.currentRoom.items):
+                    # if one is found, set the response to the
+                    # item's description
+                    response = Game.currentRoom.items[noun]
             # the verb is: take
-            elif (verb in ["take", "get"]):
+            elif (verb == "take"):
                 # set a default response
                 response = "I don't see that item."
                 # check for valid grabbable items in the current room
-                for i in Game.currentRoom.grabbables:
+                for grabbable in Game.currentRoom.grabbables:
                     # a valid grabbable item is found
-                    if (match(noun, i)):
+                    if (noun == grabbable):
                         # add the grabbable item to the player's inventory
-                        Game.inventory[i] = Game.currentRoom.grabbables[i]
+                        Game.inventory.append(grabbable)
                         # remove the grabbable item from the room
-                        Game.currentRoom.delGrabbable(i)
+                        Game.currentRoom.delGrabbable(grabbable)
                         # set the response (success)
                         response = "Item grabbed."
                         # no need to check any more grabbable items
                         break
-            elif (verb in ["use"]):
-                response = "You don't have that item."
-                for item in Game.inventory:
-                    if (match(noun, item)):
-                        response = "{} could not be used.".format(item)
-
-                        for i in Game.currentRoom.interac:
-                            if (item == Game.currentRoom.interac[i][1]):
-                                if (Game.currentRoom.interac[i][2] == "on"):
-                                    Game.currentRoom.interac[i][2] = "off"
-
-                                elif (Game.currentRoom.interac[i][2] == "off"):
-                                    Game.currentRoom.interac[i][2] = "on"
-
-                                response = "{} used.".format(item)
-                                break
-                        break
-                if (Game.currentRoom == r12):
-                    if (Game.currentRoom.interac["bomb"][2] == "off"):
-                        Game.currentRoom = None
         # display the response on the right of the GUI
         # display the room's image on the left of the GUI
         # clear the player's input
