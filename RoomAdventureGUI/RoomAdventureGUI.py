@@ -335,7 +335,7 @@ class Game(Frame):
         # enable the text widget, clear it, set it, and disabled it
         Game.text.config(state=NORMAL)
         Game.text.delete("1.0", END)
-        elif (Game.currentRoom is None):
+        if (Game.currentRoom is None):
             # if dead, let the player know
             if (r12.interac["bomb"][2] == "off"):
                 Game.text.insert(END, "An explosion killed you.\n"
