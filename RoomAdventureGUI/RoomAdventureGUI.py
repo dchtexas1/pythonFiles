@@ -122,49 +122,115 @@ class Game(Frame):
 
     # creates the rooms
     def createRooms(self):
-        # r1 through r4 are the four rooms in the mansion
-        # currentRoom is the room the player is currently in (which
-        # can be one of r1 through r4)
-        # create the rooms and give them meaningful names and an
-        # image in the current directory
-        r1 = Room("Room 1", "room1.gif")
-        r2 = Room("Room 2", "room2.gif")
-        r3 = Room("Room 3", "room3.gif")
-        r4 = Room("Room 4", "room4.gif")
-        # add exits to room 1
-        r1.addExit("east", r2)  # to the east of room 1 is room 2
-        r1.addExit("south", r3)
-        # add grabbables to room 1
-        r1.addGrabbable("key")
-        # add items to room 1
-        r1.addItem("chair", "It is made of wicker. No one is sitting on it.")
-        r1.addItem("table", "It is made of oak. A golden key rests on it.")
-        # add exits to room 2
-        r2.addExit("west", r1)
-        r2.addExit("south", r4)
-        # add items to room 2
-        r2.addItem("rug", "It is nice and Indian. It needs to be vacuumed.")
-        r2.addItem("fireplace", "It is full of ashes.")
-        # add exits to room 3
-        r3.addExit("north", r1)
-        r3.addExit("east", r4)
-        # add grabbables to room 3
-        r3.addGrabbable("book")
-        # add items to room 3
-        r3.addItem("bookshelves", "They are empty. Go figure.")
-        r3.addItem("statue", "There is nothing special about it.")
-        r3.addItem("desk", "The statue is resting on it. So is a book.")
-        # add exits to room 4
-        r4.addExit("north", r2)
-        r4.addExit("west", r3)
-        r4.addExit("south", None)  # DEATH!
-        # add grabbables to room 4
-        r4.addGrabbable("6-pack")
-        # add items to room 4
-        r4.addItem("brew_rig", "Gourd is brewing some sort of oatmeal stout "
-                   "on the brew rig. A 6-pack is resting beside it.")
-        # set room 1 as the current room at the beginning of the
-        # game
+        # some functions elsewhere need to check for these rooms
+        global currentRoom, r0, r4, r5, r8, r9, r12
+
+        # Generates all of the empty rooms
+        # all the rooms have names instead of "Room n"
+        r1 = Room("an office")
+        r2 = Room("a library")
+        r3 = Room("a sunroom")
+        r4 = Room("at the top of a stairwell")
+        r5 = Room("at the bottom of a stairwell")
+        r6 = Room("a sitting room")
+        r7 = Room("a kitchen")
+        r8 = Room("at the top of a dark stairwell")
+        r9 = Room("at the bottom of a stairwell, in a basement")
+        r10 = Room("a basement")
+        r11 = Room("a basement")
+        r12 = Room("a basement")
+        r0 = Room("outside")
+
+        # generates the office
+        r1.addExit("north", r2)
+        r1.addExit("east", r3)
+        # This keycard is used to change the state of the bomb
+        r1.addGrabbable("keycard", "It is used to prove one's credentials.")
+        r1.addItem("desk", "A modern desk, made of glass and carbon-fiber. "
+                   "There's a keycard on the desk\nbeside an inlaid terminal.")
+        r1.addItem("chair", "It is smooth, black, and shiny.")
+        r1.addItem("terminal", "The terminal glows an amber color. "
+                   "There is text on the screen.")
+        # this text can be looked, but it doesn't show up in Room.__str__
+        r1.addHiddenItem("text", "The terminal displays a draft of a message
+                         "to the separatist chancellor about\ntransporting a"
+                         "bomb out of the basement.")
+
+        # generates the library
+        r2.addExit("south", r1)
+        r2.addItem("rug", "It is awfully plush.")
+        r2.addItem("bookshelves", "The bookshelves are meticulously packed
+                   "with books.\n One of the books is not flush with the"
+                   "others. It appears to be a journal.")
+        # alas, I am a programmer, not an author
+        r2.addGrabbable("journal", "\"Some poignant world-building.\"")
+
+        # Generates a sunroom
+        r3.addExit("north", r4)
+        r3.addExit("west", r1)
+        r3.addExit("south", None)
+        r3.addItem("statue", "It has an oddly fascist... Maybe it's "
+                   "the sieg heil salute.")
+        r3.addItem("couch", "Rather plain, given the ornate statue nearby.")
+
+        # generates a stairwell room
+        r4.addExit("south", r3)
+        # here we have "vertical" movement
+        r4.addExit("down", r5)
+        r4.addItem("stairwell", "There is some light downstairs, and an..."
+                   "interesting smell wafts through.")
+
+        # generates a stairwell room
+        r5.addExit("up", r4)
+        r5.addExit("west", r6)
+        r5.addItem("stairwell", "Now that your eyes have adjusted, it's "
+                   "rather dark upstairs.")
+
+        # generates a sitting room, with access to the outside
+        r6.addExit("east", r5)
+        r6.addExit("south", r7)
+        r6.addExit("west", r0)
+        r6.addItem("fireplace", "It is warm, but dying.")
+        r6.addItem("coffee table", "It is littered with decorative pieces.")
+
+        # generates a kitchen
+        r7.addExit("north", r6)
+        r7.addExit("east", r8)
+        r7.addItem("oven", "There is an apple pie warming in it.")
+
+        # generates another stairwell room
+        r8.addExit("west", r7)
+        r8.addExit("down", r9)
+        r8.addItem("stairwell", "This stairwell is extremely deep.")
+
+        # generates basement stairwell room
+        r9.addExit("up", r8)
+        r9.addExit("west", r10)
+        r9.addExit("stairwell", "Returning to the surface will be exhausting.")
+
+        # generates extra basement room
+        r10.addExit("east", r9)
+        r10.addExit("north", r11)
+
+        # generates extra basement room
+        r11.addExit("south", r10)
+        r11.addExit("east", r12)
+
+        # generates a basement room with an interactive bomb requiring a
+        # keycard
+        r12.addExit("west", r11)
+        r12.addInteractable("bomb", "It must be deactivated to save the "
+                            "Alliance. There is a card slot on the side.",
+                            "on", "keycard")
+
+        # generates an room "outside." Of course, it's only outside bc I say so
+        r0.addExit("east", r6)
+        r0.addItem("trees", "The tree is devoid of leaves. This would lead "
+                   "you to assume that it is winter,\nexcept for the fact "
+                   "that it is hot enough to fry an egg.")
+        r0.addItem("grass", "The grass is brown and dead.")
+
+        # sets which room the user starts in
         Game.currentRoom = r1
         # initialize the player's inventory
         Game.inventory = []
@@ -256,7 +322,7 @@ class Game(Frame):
                    "Valid verbs are go, look, and take"
         # exit the game if the player wants to leave (supports quit,
         # exit, and bye)
-        if (action == "quit" or action == "exit" or action == "bye"):
+        if (action in ["quit", "exit", "bye"]):
             exit(0)
         # if the player is dead if goes/went south from room 4
         if (Game.currentRoom is None):
