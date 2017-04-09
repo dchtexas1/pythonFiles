@@ -70,15 +70,6 @@ class ChaosGame(Canvas):
     def vertices(self):
         # the top vertex
         v1 = Point(WIDTH / 2, 0)
-<<<<<<< HEAD
-        self.plotV(v1.x, v1.y, rgb(255, 0, 0))
-        # the bottom left vertex
-        v2 = Point(0, HEIGHT)
-        self.plotV(v2.x, v2.y, rgb(0, 255, 0))
-        # the bottom right vertex
-        v3 = Point(WIDTH, HEIGHT)
-        self.plotV(v3.x, v2.y, rgb(0, 0, 255))
-=======
         self.plot(v1.x, v1.y, VERTEX_COLOR, "vertex")
         # the bottom left vertex
         v2 = Point(0, HEIGHT)
@@ -86,12 +77,17 @@ class ChaosGame(Canvas):
         # the bottom right vertex
         v3 = Point(WIDTH, HEIGHT)
         self.plot(v3.x, v2.y, VERTEX_COLOR, "vertex")
->>>>>>> refs/remotes/origin/master
         # creates an array to keep track of the list
         global vtcs
         vtcs = [v1, v2, v3]
 
     def plot(self, x, y, color, pointType="point"):
+        if (x < WIDTH / 2 and y > HEIGHT / 2):
+            color = "green"
+        elif (x > WIDTH / 2 and y > HEIGHT / 2):
+            color = "blue"
+        elif (y < HEIGHT / 2):
+            color = "red"
         if (pointType == "vertex"):
             self.create_oval(x, y, x + VERTEX_RADIUS * 2,
                              y + VERTEX_RADIUS * 2, outline=color, fill=color)
@@ -107,10 +103,10 @@ WIDTH = 600
 HEIGHT = 520
 # the default vertex radius is 2 pixels and color is red
 VERTEX_RADIUS = 2
-
+VERTEX_COLOR = "red"
 # the default point radius is 0 pixels and color is black
 POINT_RADIUS = 0
-
+POINT_COLOR = "black"
 # the number of midpoints to plot
 NUM_POINTS = 50000
 
